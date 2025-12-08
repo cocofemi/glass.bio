@@ -125,6 +125,10 @@ export default function ProfileView({ slug }: { slug: string }) {
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3">
+          {/* 
+         1. We just open the "flow" here. 
+         The render logic below decides whether to show Verify or Chat 
+      */}
           <button
             onClick={() => setIsChatOpen(true)}
             className="w-full py-4 rounded-2xl bg-white text-black font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition shadow-[0_0_20px_-5px_rgba(255,255,255,0.4)] cursor-pointer"
@@ -171,16 +175,47 @@ export default function ProfileView({ slug }: { slug: string }) {
           )}
         </div>
 
-        {!token && (
-          <Turnstile
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onVerify={(value) => setToken(value)}
-            theme="dark"
-          />
-        )}
-
-        <AnimatePresence>
+        {/* LOGIC: Handle Verification Flow Overlay */}
+        <AnimatePresence mode="wait">
+          {/* State 1: User wants to chat, but needs to Verify first */}
           {isChatOpen && !token && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+            >
+              <div className="bg-[#111] border border-white/10 p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4 max-w-sm w-full">
+                <div className="text-center space-y-1">
+                  <h3 className="font-bold text-white text-lg">
+                    Security Check
+                  </h3>
+                  <p className="text-white/50 text-xs">
+                    Please verify you are human to continue.
+                  </p>
+                </div>
+
+                {/* Turnstile Container */}
+                <div className="min-h-[65px] flex items-center justify-center">
+                  <Turnstile
+                    sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                    onVerify={(value) => setToken(value)} // This triggers re-render, switching to State 2
+                    theme="dark"
+                  />
+                </div>
+
+                <button
+                  onClick={() => setIsChatOpen(false)}
+                  className="text-white/40 text-xs hover:text-white transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* State 2: User wants to chat AND has token -> Show Chat */}
+          {isChatOpen && token && (
             <SmartGlassChat
               user={data}
               onClose={() => setIsChatOpen(false)}
