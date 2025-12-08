@@ -10,22 +10,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { artistEmail, summary, name, email, phone, event, date, location, budget, notes } = body
 
-    //     const ip = request.headers.get("x-forwarded-for") || "unknown";
+        const ip = request.headers.get("x-forwarded-for") || "unknown";
         
-    //     const limit = await rateLimit({
-    //         key: ip,
-    //         limit: 3, // 10 requests
-    //         window: 60, // per 60 seconds
-    //     });
+        const limit = await rateLimit({
+            key: ip,
+            limit: 3, // 10 requests
+            window: 60, // per 60 seconds
+        });
     
-    //   if (!limit.success) {
-    //     return new Response(
-    //       JSON.stringify({
-    //         error: "Too many requests. Try again in a moment.",
-    //       }),
-    //       { status: 429 }
-    //     );
-    //   }
+      if (!limit.success) {
+        return new Response(
+          JSON.stringify({
+            error: "Too many requests. Try again in a moment.",
+          }),
+          { status: 429 }
+        );
+      }
 
     const { data, error } = await resend.emails.send({
       from: "hello@kervah.co.uk",

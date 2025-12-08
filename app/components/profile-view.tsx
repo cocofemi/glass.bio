@@ -21,26 +21,14 @@ import GlassLinkButton from "./glass-link-button";
 import { SocialIcon } from "./social-icom";
 import SmartGlassChat from "./chat";
 import HomeContainer from "./home-container";
-
-const EMPTY: UserProfile = {
-  id: "",
-  name: "",
-  profession: "",
-  bio: "",
-  email: "",
-  spotifyId: "",
-  followers: 0,
-  slug: "",
-  avatar: "",
-  socials: { instagram: "", twitter: "", youtube: "", spotify: "" },
-  links: { latestRelease: "", merchStore: "", tourDates: "" },
-};
+import Turnstile from "react-turnstile";
 
 export default function ProfileView({ slug }: { slug: string }) {
   const [data, setData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [token, setToken] = useState("");
 
   const copyToClipboard = () => {
     // Mock URL copy
@@ -162,7 +150,7 @@ export default function ProfileView({ slug }: { slug: string }) {
           )}
           {data.links.tourDates && (
             <GlassLinkButton
-              title="Tour Dates"
+              title="Tour Tickets"
               subtitle="Tickets"
               icon={<Calendar size={18} className="text-blue-400" />}
               url={data.links.tourDates}
@@ -183,9 +171,21 @@ export default function ProfileView({ slug }: { slug: string }) {
           )}
         </div>
 
+        {!token && (
+          <Turnstile
+            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onVerify={(value) => setToken(value)}
+            theme="dark"
+          />
+        )}
+
         <AnimatePresence>
-          {isChatOpen && (
-            <SmartGlassChat user={data} onClose={() => setIsChatOpen(false)} />
+          {isChatOpen && !token && (
+            <SmartGlassChat
+              user={data}
+              onClose={() => setIsChatOpen(false)}
+              token={token}
+            />
           )}
         </AnimatePresence>
 

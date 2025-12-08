@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import GlassCard from "./glass-card";
-import { ArrowRight, Edit3, Key } from "lucide-react";
 import HomeContainer from "./home-container";
 import Image from "next/image";
 import spotify from "../assets/images/512px-Spotify_icon.svg.png";
@@ -12,8 +9,6 @@ import { signIn } from "next-auth/react";
 import { SiYoutubemusic } from "react-icons/si";
 
 export default function HomeView() {
-  const router = useRouter();
-  const [inputKey, setInputKey] = useState("");
   return (
     <HomeContainer>
       <motion.div
