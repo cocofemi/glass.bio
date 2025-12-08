@@ -44,7 +44,9 @@ export default function ProfileView({ slug }: { slug: string }) {
 
   const copyToClipboard = () => {
     // Mock URL copy
-    navigator.clipboard.writeText(`https://glass-bio.vercel.app/${slug}`);
+    navigator.clipboard.writeText(
+      `https://${process.env.NEXTAUTH_URL}/profile/${slug}`
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
