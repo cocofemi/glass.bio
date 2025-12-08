@@ -1,0 +1,1 @@
+export const Button=({className='',...p})=><button className={`bg-black text-white rounded-md px-3 py-2 text-sm ${className}`} {...p}/>;

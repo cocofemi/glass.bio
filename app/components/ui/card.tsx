@@ -1,0 +1,1 @@
+export const Card=({className='',...p})=><div className={`border rounded-xl bg-white shadow-sm ${className}`} {...p}/>;export const CardContent=({className='',...p})=><div className={`p-4 ${className}`} {...p}/>;
