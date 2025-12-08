@@ -45,13 +45,11 @@ export default function ProfileView({ slug }: { slug: string }) {
   const copyToClipboard = () => {
     // Mock URL copy
     navigator.clipboard.writeText(
-      `https://${process.env.NEXTAUTH_URL}/profile/${slug}`
+      `https://${process.env.NEXT_PUBLIC_BASE_URL}/profile/${slug}`
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  console.log("Slug", slug);
 
   useEffect(() => {
     const loadProfile = async () => {
