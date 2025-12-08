@@ -24,13 +24,13 @@ export async function POST(req: Request) {
     const { messages, slug, token } = await req.json();
     const ip = req.headers.get("x-forwarded-for") || "unknown";
 
-    // const valid = await verifyTurnstile(token, ip);
+    const valid = await verifyTurnstile(token, ip);
 
-    // if (!valid) {
-    //     return new Response(JSON.stringify({ error: "Failed human verification." }), {
-    //     status: 403,
-    //     });
-    // }
+    if (!valid) {
+        return new Response(JSON.stringify({ error: "Failed human verification." }), {
+        status: 403,
+        });
+    }
     
     const limit = await rateLimit({
         key: ip,

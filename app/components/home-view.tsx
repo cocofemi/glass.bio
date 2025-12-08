@@ -9,6 +9,7 @@ import HomeContainer from "./home-container";
 import Image from "next/image";
 import spotify from "../assets/images/512px-Spotify_icon.svg.png";
 import { signIn } from "next-auth/react";
+import { SiYoutubemusic } from "react-icons/si";
 
 export default function HomeView() {
   const router = useRouter();
@@ -31,45 +32,36 @@ export default function HomeView() {
         </div>
 
         <GlassCard className="p-8 space-y-6">
-          {/* <div className="space-y-3">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">
-              Edit Existing Profile
-            </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Key
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
-                  size={16}
-                />
-                <input
-                  value={inputKey}
-                  onChange={(e) => setInputKey(e.target.value)}
-                  placeholder="Enter Access Key..."
-                  className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:bg-black/40 outline-none transition text-white placeholder-white/20 font-mono"
-                />
-              </div>
-              <button
-                disabled={!inputKey}
-                //   onClick={() => onLoad(inputKey)}
-                className="bg-white/10 hover:bg-white/20 disabled:opacity-30 border border-white/10 text-white p-3 rounded-xl transition"
-              >
-                <ArrowRight size={20} />
-              </button>
-            </div>
-          </div> */}
           <div className="space-y-3">
+            {/* Updated label to be inclusive of both music platforms */}
             <label className="text-xs font-bold text-white/40 uppercase tracking-widest">
-              Create a profile or sign in with spotify
+              Connect your music library
             </label>
           </div>
+
           <div className="w-full h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
+
           <div className="space-y-3">
+            {/* PRIMARY: Spotify (High Contrast) */}
             <button
               onClick={() => signIn("spotify")}
               className="w-full py-4 rounded-xl bg-white text-black font-bold hover:bg-white/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Image src={spotify} alt="spotify-logo" width={20} height={20} />
-              Continue with spotify
+              Continue with Spotify
+            </button>
+
+            {/* SECONDARY: YouTube Music (Glass/Dark Theme) */}
+
+            <button
+              onClick={() => signIn("google")}
+              className="w-full py-4 rounded-xl bg-black/40 border border-white/10 text-white font-bold hover:bg-black/60 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer group"
+            >
+              {/* Official YouTube Music Red Circle Icon */}
+              <div className="p-1 bg-white rounded-full flex items-center justify-center">
+                <SiYoutubemusic size={16} className="text-[#FF0000]" />
+              </div>
+              <span>Continue with YouTube Music</span>
             </button>
           </div>
         </GlassCard>
