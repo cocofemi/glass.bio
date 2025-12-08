@@ -45,7 +45,7 @@ export default function ProfileView({ slug }: { slug: string }) {
   const copyToClipboard = () => {
     // Mock URL copy
     navigator.clipboard.writeText(
-      `https://${process.env.NEXT_PUBLIC_BASE_URL}/profile/${slug}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/profile/${slug}`
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
