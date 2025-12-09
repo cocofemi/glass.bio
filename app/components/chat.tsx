@@ -88,6 +88,27 @@ export default function SmartGlassChat({
     setIsTyping(false);
   };
 
+  function renderMessage(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    return text.split(urlRegex).map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -134,13 +155,13 @@ export default function SmartGlassChat({
               }`}
             >
               <div
-                className={`p-3.5 max-w-[85%] text-sm leading-relaxed ${
+                className={`p-3.5 max-w-[85%] text-sm leading-relaxed break-words whitespace-pre-wrap overflow-hidden ${
                   m.sender === "user"
                     ? "bg-linear-to-br from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-sm shadow-lg"
                     : "bg-white/10 border border-white/5 text-gray-100 rounded-2xl rounded-tl-sm backdrop-blur-md"
                 }`}
               >
-                {m.text}
+                {renderMessage(m.text)}
               </div>
             </div>
           ))}
