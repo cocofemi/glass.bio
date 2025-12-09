@@ -27,6 +27,8 @@ export default function SmartGlassChat({
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const [verified, setVerified] = useState(false);
+
   const defaultSuggestions = [
     { label: "📅 Bookings", value: "How do I book you?" },
     { label: "🎵 New Music", value: "Where is the latest release?" },
@@ -56,11 +58,16 @@ export default function SmartGlassChat({
           { role: "user", content: text },
         ],
         slug,
-        token,
+        token: !verified ? token : null,
+        verified,
       }),
     });
 
     const data = await res.json();
+
+    if (res.ok) {
+      setVerified(true);
+    }
 
     if (data.type === "chat") {
       setMessages((prev) => [

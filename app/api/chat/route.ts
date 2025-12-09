@@ -16,27 +16,31 @@ async function verifyTurnstile(token: string, ip: string | null) {
   });
 
   const data = await res.json();
+  console.log("Data success", data.success)
   return data.success === true;
 }
 
 
 export async function POST(req: Request) {
-    const { messages, slug, token } = await req.json();
+    const { messages, slug, token, verified } = await req.json();
+    console.log("Token", token)
     const ip = req.headers.get("x-forwarded-for") || "unknown";
 
-    const valid = await verifyTurnstile(token, ip);
-
-    if (!valid) {
-        return new Response(JSON.stringify({ error: "Failed human verification." }), {
-        status: 403,
-        });
+    if (!verified) {
+        const valid = await verifyTurnstile(token, ip);
+        if (!valid) {
+            return new Response(JSON.stringify({ error: "Failed human verification." }), {
+            status: 403,
+            });
+        }
     }
-    
     const limit = await rateLimit({
         key: ip,
         limit: 10, // 10 requests
         window: 60, // per 60 seconds
     });
+
+console.log("Verified", verified)
 
   if (!limit.success) {
     return new Response(

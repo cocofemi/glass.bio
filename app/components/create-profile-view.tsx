@@ -11,6 +11,7 @@ import {
   Instagram,
   Link,
   LinkIcon,
+  LogOut,
   Mail,
   Music,
   RefreshCw,
@@ -28,6 +29,7 @@ import { UserProfile } from "../types/index.types";
 import { supabase } from "../lib/supabase";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const INITIAL_STATE: UserProfile = {
   id: "",
@@ -99,7 +101,7 @@ function ProfileBuilder() {
       // First-time user → Populate from Spotify session
       const spotifyUser = session.user;
 
-      console.log("FIRST-TIME SPOTIFY USER:", spotifyUser);
+      console.log("FIRST-TIME SPOTIFY USER/GOOGLE USER:", spotifyUser);
 
       setData({
         ...INITIAL_STATE,
@@ -113,7 +115,10 @@ function ProfileBuilder() {
         socials: {
           instagram: "",
           twitter: "",
-          youtube: "",
+          youtube:
+            session.provider === "google"
+              ? `https://www.youtube.com/@${slugify(session?.user?.name)}`
+              : "",
           spotify: spotifyUser?.id
             ? `https://open.spotify.com/user/${spotifyUser.id}`
             : "",
@@ -123,7 +128,7 @@ function ProfileBuilder() {
           merchStore: "",
           tourDates: "",
         },
-        followers: spotifyUser?.followers ?? 0,
+        followers: session.user.followers ?? 0,
       });
     };
 
@@ -475,6 +480,16 @@ function ProfileBuilder() {
           >
             {isLoading ? "Saving profile..." : "Save & Publish"}
           </button>
+
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={() => signOut()}
+              className="text-xs text-white/30 hover:text-red-400 transition flex items-center gap-2 py-2"
+            >
+              <LogOut size={14} />
+              <span>Sign out</span>
+            </button>
+          </div>
         </GlassCard>
       </motion.div>
     </HomeContainer>
