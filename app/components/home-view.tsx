@@ -47,6 +47,13 @@ export default function HomeView() {
             </button>
 
             {/* SECONDARY: YouTube Music (Glass/Dark Theme) */}
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-white/10"></div>
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
+                or
+              </span>
+              <div className="h-px flex-1 bg-white/10"></div>
+            </div>
 
             <button
               onClick={() => signIn("google")}
