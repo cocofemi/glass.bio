@@ -1,6 +1,10 @@
+import { getServerSession } from "next-auth";
 import HomeView from "../components/home-view";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
-function Page() {
+async function Page() {
+  const session = await getServerSession(authOptions);
+  console.log(session);
   return <HomeView />;
 }
 

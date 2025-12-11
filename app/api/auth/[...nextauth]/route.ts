@@ -52,18 +52,22 @@ const authOptions = {
 
           // GOOGLE/YOUTUBE DATA
         if (account.provider === "google") {
+          token.uid = profile.sub;
           token.email = profile.email;
           token.name = profile.name;
           token.image = profile.picture;
           token.youtubeSubscribers = token.youtubeSubscribers ?? null; 
+          token.accessToken = account.access_token;
+          token.provider = account.provider
         }
 
         if (account.provider === 'spotify') {
-          token.spotifyId = profile.id;
+          token.uid = profile.id; 
           token.image = profile.images?.[0]?.url ?? null;
           token.spotifyProfileUrl = profile.external_urls?.spotify;
           token.spotifyFollowers = profile.followers?.total;
           token.accessToken = account.access_token;
+          token.provider = account.provider
         }
         
         }
@@ -77,8 +81,8 @@ const authOptions = {
     session.user.email = token.email ?? session.user.email;
     session.user.image = token.image ?? session.user.image;
 
+    session.user.id = token.uid;  
 
-    session.user.id = token.spotifyId;
     session.user.profileUrl = token.spotifyProfileUrl;
     session.user.image = token.image 
     ? token.image 

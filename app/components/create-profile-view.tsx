@@ -6,10 +6,8 @@ import GlassCard from "./glass-card";
 import TabButton from "./tab-button";
 import {
   Briefcase,
-  Calendar,
   ExternalLink,
   Instagram,
-  Link,
   LinkIcon,
   LogOut,
   Mail,
@@ -17,10 +15,10 @@ import {
   RefreshCw,
   ShoppingBag,
   Ticket,
-  Twitch,
   Twitter,
   User,
   X,
+  Youtube,
 } from "lucide-react";
 import GlassInput from "./glass-input";
 import LinkSection from "./link-section";
@@ -58,8 +56,8 @@ function ProfileBuilder() {
     if (!session?.user) return;
 
     const loadProfile = async () => {
-      const userId = session.user.id;
-      console.log("Type of", typeof userId); // ← YOU MUST set this in your session callback
+      const uid = session.user.id;
+      console.log("Type of", typeof uid); // ← YOU MUST set this in your session callback
 
       console.log("SESSION USER:", session.user);
 
@@ -67,14 +65,14 @@ function ProfileBuilder() {
       const { data: profile, error } = await supabase
         .from("users")
         .select("*")
-        .eq("spotifyId", session.user?.id)
+        .eq("uid", uid)
         .maybeSingle();
 
       if (profile) {
         // ✔ Populate with Supabase data
         setData({
           ...INITIAL_STATE,
-          id: userId,
+          id: uid,
           name: profile.name ?? "",
           slug: profile.slug ?? "",
           email: profile.email ?? "",
@@ -105,7 +103,7 @@ function ProfileBuilder() {
 
       setData({
         ...INITIAL_STATE,
-        id: userId,
+        id: uid,
         name: spotifyUser?.name ?? "",
         email: spotifyUser?.email ?? "",
         avatar:
@@ -117,7 +115,7 @@ function ProfileBuilder() {
           twitter: "",
           youtube:
             session.provider === "google"
-              ? `https://www.youtube.com/@${slugify(session?.user?.name)}`
+              ? `https://www.youtube.com/@${slugify(spotifyUser?.name)}`
               : "",
           spotify: spotifyUser?.id
             ? `https://open.spotify.com/user/${spotifyUser.id}`
@@ -207,13 +205,13 @@ function ProfileBuilder() {
 
     if (!session?.user) return;
 
-    const spotifyId = session.user.id; // from NextAuth callback
+    const uid = session.user.id; // from NextAuth callback
 
     // Check if user exists
     const { data: existingProfile, error: fetchError } = await supabase
       .from("users")
       .select("*")
-      .eq("spotifyId", spotifyId)
+      .eq("uid", uid)
       .maybeSingle();
 
     if (fetchError) {
@@ -244,7 +242,7 @@ function ProfileBuilder() {
       const { data: updated, error: updateError } = await supabase
         .from("users")
         .update(payload)
-        .eq("spotifyId", spotifyId)
+        .eq("uid", uid)
         .select()
         .single();
 
@@ -253,7 +251,6 @@ function ProfileBuilder() {
         return;
       }
 
-      console.log("Profile updated:", updated);
       setIsLoading(false);
       router.push(`/profile/${slugify(data.name)}`);
       return updated;
@@ -263,7 +260,9 @@ function ProfileBuilder() {
     const { data: created, error: insertError } = await supabase
       .from("users")
       .insert({
-        spotifyId: spotifyId, // store ORIGINAL Spotify ID
+        uid,
+        spotifyId: session.provider === "spotify" ? uid : null,
+        youtubeId: session.provider === "google" ? uid : null,
         ...payload,
       })
       .select()
@@ -364,7 +363,7 @@ function ProfileBuilder() {
                   </div>
                 </div>
                 <div className="text-center text-green-200">
-                  <p>{`Spotify followers:${data?.followers}`}</p>
+                  <p>{`${data?.followers}`} Followers</p>
                 </div>
                 <GlassInput
                   icon={<User />}
@@ -408,14 +407,15 @@ function ProfileBuilder() {
                     icon={<Music />}
                     placeholder="Spotify URL"
                     value={data.socials.spotify}
-                    disabled={true}
+                    disabled={session?.provider === "google" ? false : true}
                     onChange={(e: any) =>
                       handleNested("socials", "spotify", e.target.value)
                     }
                   />
                   <GlassInput
-                    icon={<Instagram />}
+                    icon={<Youtube />}
                     placeholder="Youtube"
+                    disabled={session?.provider === "spotify" ? false : true}
                     value={data.socials.youtube}
                     onChange={(e: any) =>
                       handleNested("socials", "youtube", e.target.value)

@@ -212,10 +212,6 @@ if (parsed.type === "booking_ready") {
     process.env.NEXTAUTH_URL ||
     "http://localhost:3000";
 
-    console.log("BASE URL:", baseUrl);
-    console.log("POSTING TO:", `${baseUrl}/api/send-booking`);
-
-
   try {
     await fetch(`${baseUrl}/api/send-booking`, {
       method: "POST",
@@ -242,9 +238,4 @@ return NextResponse.json({
   type: "chat",
   response: parsed.response || "How can I help you?",
 });
-
 }
-
-//collect location 
-//turnstile
-//apple music
